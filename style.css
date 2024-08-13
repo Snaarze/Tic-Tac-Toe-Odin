@@ -17,12 +17,26 @@ body {
 .container{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3,1fr);
     border: 1px solid black;
     width: 30vw;
     height: 50vh;
 }
 
 .container > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid black;
-    flex : 1;
+    text-align: center;
+    font-size: 100px;
+}
+
+.resetBoard {
+    padding: 20px 60px;
+    font-size: 24px;
+    background-color: lightblue;
+    color: white;
+    border: none;
+    border-radius: 30px;
 }
