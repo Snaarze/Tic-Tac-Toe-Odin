@@ -1,7 +1,8 @@
+//A function that will create an array 
 function Gameboard() {
     const rowColumn = 9;    
     const board = [];
-
+    
     // Initialize the board
     for (let i = 0; i < 1; i++) {
         board[i] = [];
@@ -9,31 +10,43 @@ function Gameboard() {
             board[i].push(Cell());
         }
     }
-
+    //current state of the board
     const getBoard = () => board;
-
+    
     const dropMark = (column, player) => {
+        const availableCells = board[0].filter(cell => cell.getValue() === 0);
+        const currentCellCount = availableCells.length - 1
+        
+        if(currentCellCount === 0){
+            console.log("no turn left")
+            return;
+        }
+           
         board[0][column].addToken(player);
+        console.log(currentCellCount)
     };
 
-    console.log("Initial value of board[0][1]:", board[0][1].getValue());
-    return { getBoard, dropMark, board };
+    const resetBoard = () => board[0].filter(row => row.resetValue());
+    return { getBoard, dropMark, board, resetBoard};
 }
 
 function Cell() {
     let value = 0;
 
     const addToken = (player) => {
-        value = player;  // Update the cell's value
+        value = player; 
     };
 
+    const resetValue =  () => {
+        value = 0;
+    }
     const getValue = () => value;
 
-    return { getValue, addToken };
+    return { getValue, addToken, resetValue};
 }
 
 function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
-    const game = Gameboard();  // This creates a single game board instance
+    const game = Gameboard();
     const Players = [
         { name: PlayerOne, mark: "X" },
         { name: PlayerTwo, mark: "O" }
@@ -60,17 +73,10 @@ function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
         console.log(`current turn  ` + `${getActivePlayer().name}`)
     };
 
+ 
 
-    return { getActivePlayer, switchTurns, PlayRound, game };
+
+    return { getActivePlayer, switchTurns, PlayRound, game};
 }
 
-// Create a single instance of the game controller
-const controller = GameController();
-
-// Play multiple rounds using the same controller instance
-controller.PlayRound(1); 
-controller.PlayRound(2); 
-controller.PlayRound(3);
-controller.PlayRound(4);
-controller.PlayRound(4);
-controller.PlayRound(5);
+const game = GameController();
