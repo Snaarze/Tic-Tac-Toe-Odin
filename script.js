@@ -30,19 +30,24 @@ function Gameboard() {
     };
     // 
     const getBoard = () => board;
-    
+   
+   
     const dropMark = (column, player) => {
-        if (board[0][column].getValue() !== 0) {
+        const availableCells = board[0].filter(row => row.getValue() === 0);
+        const currentCells = availableCells.length - 1;
+       
+        console.log(currentCells)
+        if (board[0][column].getValue() !== 0)  {
             console.log("Column is already filled");
             return;
         }
-        
         board[0][column].addToken(player);
+        return {currentCells}
     };
 
     const resetBoard = () => board[0].forEach(cell => cell.resetValue());
     
-    return { getBoard, dropMark, board, resetBoard, checkWin };
+    return { getBoard, dropMark,resetBoard, checkWin, board};
 }
 
 function Cell() {
@@ -80,34 +85,21 @@ function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
 
     const PlayRound = (column = prompt("Choose a column to drop your mark:")) => {
         const player = getActivePlayer();
+       
         console.log(`Current turn: ` + `${getActivePlayer().name}`);
-        if (Game.getBoard()[0][column].getValue() === 0) {
-            
+        if (Game.currentCells !== 0) {
             console.log(`${player.name} is dropping to column ${column}`);   
             Game.dropMark(column, player.mark);
-           
-            if (Game.checkWin(player.mark)) {
-                console.log(`${player.name} wins!`);
-                player.score++;
-                console.log(`${player.score}`);
-                return; // End the game after a win
-            }
-            ;
-        } else {
-            console.log("Column is full or invalid, try again.");
-            return;
         }
         switchTurns()
     };
     
-
-    return { getActivePlayer, switchTurns, PlayRound, Game };
+    return { getActivePlayer, switchTurns, PlayRound, Game};
 }
 
 
 function ScreenController(){
     const game = GameController();  
-
     // selector for all div
     const containerChild = document.querySelectorAll(".container > .markDiv");
     const resetBtn = document.querySelector(".resetBoard");
@@ -115,11 +107,21 @@ function ScreenController(){
     // when a user click any div it will change the text content based on the Player's mark
     containerChild.forEach(div => {
         if (!div.hasEventListener) {
-            div.addEventListener("click", (event) => {
+            div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
-                game.PlayRound(index);
-                div.textContent = `${player.mark}`; // Update UI with the current player's mark
+                if(game.Game.board[0][index].getValue() === 0){
+                    game.PlayRound(index);
+                    div.textContent = `${player.mark}`; // Update UI with the current player's mark          
+                    if (game.Game.checkWin(player.mark)) { 
+                        console.log(`${player.name} wins`)
+                        player.score++;
+                        return ; // End the game after a win
+                    }
+                }
+                if(game.currentCells === 0){
+                    game.Game.resetBoard()
+                }
             });
         }
     });
