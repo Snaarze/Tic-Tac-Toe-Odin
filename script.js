@@ -31,7 +31,7 @@ function Gameboard() {
     // 
     const getBoard = () => board;
    
-   
+    //drop the mark of the current player and base on the data index of div to store it into column parameters
     const dropMark = (column, player) => {
         const availableCells = board[0].filter(row => row.getValue() === 0);
         const currentCells = availableCells.length - 1;
@@ -50,6 +50,8 @@ function Gameboard() {
     return { getBoard, dropMark,resetBoard, checkWin, board};
 }
 
+
+// inherits the functions to the cell of the board arrays
 function Cell() {
     let value = 0;
 
@@ -65,6 +67,8 @@ function Cell() {
 
     return { getValue, addToken, resetValue };
 }
+
+
 
 function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
     const Game = Gameboard();
@@ -99,6 +103,7 @@ function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
 
 
 function ScreenController(){
+    let isWinner = false
     const game = GameController();  
     // selector for all div
     const containerChild = document.querySelectorAll(".container > .markDiv");
@@ -110,18 +115,22 @@ function ScreenController(){
             div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
-                if(game.Game.board[0][index].getValue() === 0){
-                    game.PlayRound(index);
-                    div.textContent = `${player.mark}`; // Update UI with the current player's mark          
-                    if (game.Game.checkWin(player.mark)) { 
-                        console.log(`${player.name} wins`)
-                        player.score++;
-                        return ; // End the game after a win
-                    }
-                }
-                if(game.currentCells === 0){
+                if(game.Game.currentCells === 0){
                     game.Game.resetBoard()
                 }
+                if(game.Game.board[0][index].getValue() === 0){
+                    if(isWinner) return;    
+                    game.PlayRound(index);
+                    div.textContent = `${player.mark}`; // Update UI with the current player's mark    
+                     
+                    if (game.Game.checkWin(player.mark)) { 
+                        isWinner = true
+                        player.score++;
+                        console.log(`${player.name} wins && current score : ${player.score}`)
+                        return isWinner; // End the game after a win
+                    }
+                }
+               
             });
         }
     });
@@ -131,6 +140,7 @@ function ScreenController(){
         })
         game.Game.resetBoard();
         game.switchTurns()
+        isWinner = false;
     } 
 
     // when the button is click the board and the textContent will be empty
