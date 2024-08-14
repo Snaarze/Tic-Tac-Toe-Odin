@@ -30,24 +30,26 @@ function Gameboard() {
     };
     // 
     const getBoard = () => board;
-   
+    
+        
     //drop the mark of the current player and base on the data index of div to store it into column parameters
     const dropMark = (column, player) => {
         const availableCells = board[0].filter(row => row.getValue() === 0);
         const currentCells = availableCells.length - 1;
        
-        console.log(currentCells)
         if (board[0][column].getValue() !== 0)  {
             console.log("Column is already filled");
             return;
         }
         board[0][column].addToken(player);
+        console.log(currentCells)
         return {currentCells}
+        
     };
 
     const resetBoard = () => board[0].forEach(cell => cell.resetValue());
     
-    return { getBoard, dropMark,resetBoard, checkWin, board};
+    return { getBoard, dropMark,resetBoard, checkWin, board,};
 }
 
 
@@ -70,7 +72,7 @@ function Cell() {
 
 
 
-function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
+function GameController(PlayerOne = prompt(), PlayerTwo = "Computer") {
     const Game = Gameboard();
     const Players = [
         { name: PlayerOne, mark: "X", score : 0},
@@ -98,7 +100,7 @@ function GameController(PlayerOne = "JJ", PlayerTwo = "GG") {
         switchTurns()
     };
     
-    return { getActivePlayer, switchTurns, PlayRound, Game};
+    return { getActivePlayer, switchTurns, PlayRound, Game, Players};
 }
 
 
@@ -108,24 +110,37 @@ function ScreenController(){
     // selector for all div
     const containerChild = document.querySelectorAll(".container > .markDiv");
     const resetBtn = document.querySelector(".resetBoard");
-
+    const player1 = document.querySelector(".Player1-name");
+    const player1Score = document.querySelector(".Player1-score");
+    const player2 = document.querySelector(".Player2-name");
+    const player2Score = document.querySelector(".Player2-score");
+    
+    // display the playername on both sides
+    player1.textContent = game.Players[0].name
+    player2.textContent = game.Players[1].name
+    
     // when a user click any div it will change the text content based on the Player's mark
     containerChild.forEach(div => {
         if (!div.hasEventListener) {
             div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
-                if(game.Game.currentCells === 0){
-                    game.Game.resetBoard()
-                }
+                
                 if(game.Game.board[0][index].getValue() === 0){
-                    if(isWinner) return;    
+                    if(isWinner){
+                        resetBoardAndContent()
+                        return;
+                    };    
                     game.PlayRound(index);
                     div.textContent = `${player.mark}`; // Update UI with the current player's mark    
                      
                     if (game.Game.checkWin(player.mark)) { 
                         isWinner = true
                         player.score++;
+                        // display the current score of the players
+                        player1Score.textContent = game.Players[0].score
+                        player2Score.textContent = game.Players[1].score
+                        
                         console.log(`${player.name} wins && current score : ${player.score}`)
                         return isWinner; // End the game after a win
                     }
@@ -135,16 +150,20 @@ function ScreenController(){
         }
     });
     function resetBoardAndContent(){
+        if(game.getActivePlayer().mark !== "X"){
+            game.switchTurns()
+        }
         containerChild.forEach(div =>{
             div.textContent = "";
         })
         game.Game.resetBoard();
-        game.switchTurns()
+        
         isWinner = false;
     } 
 
     // when the button is click the board and the textContent will be empty
     resetBtn.addEventListener("click", resetBoardAndContent);
+    return {game}
 }
 
-ScreenController();
+ScreenController(); 
