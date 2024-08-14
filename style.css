@@ -8,14 +8,25 @@
 body {
     width: 100vw;
     height: 100vh;
+
+}
+
+.game-container{
+    width: 100vw;
+    height: 100vh;
     display: grid;
     justify-items: center;
     align-items: center;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 3fr 1fr;
+    grid-template-areas: "Player1 Gameboard Player2"
+                         "Player1 buttons Player2" ;
 }
 
 
 .container{
     display: grid;
+    grid-area: Gameboard;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3,1fr);
     border: 1px solid black;
@@ -32,6 +43,29 @@ body {
     font-size: 100px;
 }
 
+.player1-container{
+   
+    grid-area: Player1;
+
+}
+.player2-container{
+   
+    grid-area: Player2;
+}
+
+.player1-container, .player2-container{
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    height: 100%;
+    width: 100%;
+}
+
+
+.button-game{
+    grid-area: buttons;
+    width: 100%;
+    height: 100%;
+}
 .resetBoard {
     padding: 20px 60px;
     font-size: 24px;
