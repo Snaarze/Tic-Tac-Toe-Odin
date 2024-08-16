@@ -35,7 +35,7 @@ function Gameboard() {
     
     //drop the mark of the current player and base on the data index of div to store it into column parameters
     const dropMark = (column, player) => {
-        
+        //checks if the current column value is not 0
         if (board[0][column].getValue() !== 0)  {
             console.log("Column is already filled");
             return;
@@ -67,7 +67,7 @@ function Cell() {
 }
 
 
-
+// control the flow of the game
 function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
     const Game = Gameboard();
     const Players = [
@@ -77,14 +77,13 @@ function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
 
     let activePlayer = Players[0];
     const getActivePlayer = () => activePlayer;
+    // changes the active player every turn
     const switchTurns = () => {
         activePlayer = activePlayer === Players[0] ? Players[1] : Players[0];   
     };
 
-   
-
     console.log(`${getActivePlayer().name} starts the game.`);
-
+    // drop their mark then switch their turn
     const PlayRound = (column = prompt("Choose a column to drop your mark:")) => {
         const player = getActivePlayer();
         // get the current cells length
@@ -98,7 +97,7 @@ function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
     return { getActivePlayer, switchTurns, PlayRound, Game, Players};
 }
 
-
+// display all player credentials
 function ScreenController(){
     let isWinner = false
     
@@ -114,25 +113,17 @@ function ScreenController(){
     const playBtn = document.querySelector(".playBtn")
     const  playerResult = document.querySelector(".player-win")
     
-    function openCheck(modal) {
-        if (modal.open) {
-          console.log("Dialog open");
-        } else {
-          console.log("Dialog closed");
-        }
-      }
-
-      
-
-
+    // 
     function modalInteraction(){
         playBtn.addEventListener("click", ()=>{
             
             resetBoardAndContent();
             // close() && showModal isnt working, just alternative to use
             modal.close();
-            openCheck(modal); 
         })
+
+         // when the button is click the board and the textContent will be empty
+         resetBtn.addEventListener("click", resetBoardAndContent);
     }
 
     modalInteraction();
@@ -143,37 +134,29 @@ function ScreenController(){
     player2.textContent = game.Players[1].name
     
     // when a user click any div it will change the text content based on the Player's mark
-function playGame(){
-    containerChild.forEach(div => {
-        if (!div.hasEventListener) {    
-            div.addEventListener("click", () => {
+    function playGame(){
+        containerChild.forEach(div => {
+            if (!div.hasEventListener) {    
+                div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
-                const availableCells = game.Game.board[0].filter(row => row.getValue() === 0).length - 1
-                console.log(availableCells);
-                console.log(isWinner)
-                
+
                 if(game.Game.board[0][index].getValue() === 0 && !isWinner){
                     div.textContent = `${player.mark}`; // Update UI with the current player's mark   
                     game.PlayRound(index);
-                    if(availableCells === 0){
-                        modal.showModal();
-                        openCheck(modal);  
-                        playerResult.textContent ="Draw!, Try again next Round!"
-                        return
-                    }   
                     checkWin(player);
                     
                 }
-            });
-        }
-    });
-}
+                });
+            }
+        });
+    }
 
-// initial call
-playGame();
+    // initial call
+    playGame();
 
     function checkWin(player){
+        const availableCells = game.Game.board[0].filter(row => row.getValue() === 0).length
         if (game.Game.checkWin(player.mark)) {    
             isWinner = true;
             player.score++;
@@ -181,12 +164,15 @@ playGame();
             player2Score.textContent = game.Players[1].score
             if(isWinner === true){
                 modal.showModal();
-                openCheck(modal);  
                 playerResult.textContent = `Congratulation!, ${player.name} You won the round!`
                 return;
             }
             console.log(`${player.name} wins && current score : ${player.score}`)
             return isWinner; // End the game after a win
+        }else if( availableCells === 0){
+            modal.showModal(); 
+            playerResult.textContent ="Draw!, Try again next Round!"
+            return
         }
     }
 
@@ -203,8 +189,7 @@ playGame();
         isWinner = false;
     } 
 
-    // when the button is click the board and the textContent will be empty
-    resetBtn.addEventListener("click", resetBoardAndContent);
+   
     return {game}
 }
 
