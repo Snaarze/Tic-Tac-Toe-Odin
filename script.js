@@ -30,26 +30,22 @@ function Gameboard() {
     };
     // 
     const getBoard = () => board;
+
+   
     
-        
     //drop the mark of the current player and base on the data index of div to store it into column parameters
     const dropMark = (column, player) => {
-        const availableCells = board[0].filter(row => row.getValue() === 0);
-        const currentCells = availableCells.length - 1;
-       
+        
         if (board[0][column].getValue() !== 0)  {
             console.log("Column is already filled");
             return;
-        }
+        }   
         board[0][column].addToken(player);
-        console.log(currentCells)
-        return {currentCells}
-        
     };
 
     const resetBoard = () => board[0].forEach(cell => cell.resetValue());
     
-    return { getBoard, dropMark,resetBoard, checkWin, board,};
+    return { getBoard, dropMark,resetBoard, checkWin, board};
 }
 
 
@@ -72,7 +68,7 @@ function Cell() {
 
 
 
-function GameController(PlayerOne = prompt(), PlayerTwo = "Computer") {
+function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
     const Game = Gameboard();
     const Players = [
         { name: PlayerOne, mark: "X", score : 0},
@@ -80,23 +76,22 @@ function GameController(PlayerOne = prompt(), PlayerTwo = "Computer") {
     ];
 
     let activePlayer = Players[0];
-
     const getActivePlayer = () => activePlayer;
-    
     const switchTurns = () => {
         activePlayer = activePlayer === Players[0] ? Players[1] : Players[0];   
     };
+
+   
 
     console.log(`${getActivePlayer().name} starts the game.`);
 
     const PlayRound = (column = prompt("Choose a column to drop your mark:")) => {
         const player = getActivePlayer();
-       
+        // get the current cells length
         console.log(`Current turn: ` + `${getActivePlayer().name}`);
-        if (Game.currentCells !== 0) {
-            console.log(`${player.name} is dropping to column ${column}`);   
-            Game.dropMark(column, player.mark);
-        }
+        console.log(`${player.name} is dropping to column ${column}`);   
+        Game.dropMark(column, player.mark);
+    
         switchTurns()
     };
     
@@ -106,6 +101,7 @@ function GameController(PlayerOne = prompt(), PlayerTwo = "Computer") {
 
 function ScreenController(){
     let isWinner = false
+    
     const game = GameController();  
     // selector for all div
     const containerChild = document.querySelectorAll(".container > .markDiv");
@@ -114,50 +110,96 @@ function ScreenController(){
     const player1Score = document.querySelector(".Player1-score");
     const player2 = document.querySelector(".Player2-name");
     const player2Score = document.querySelector(".Player2-score");
+    const modal = document.querySelector("#modal-container");
+    const playBtn = document.querySelector(".playBtn")
+    const  playerResult = document.querySelector(".player-win")
     
+    function openCheck(modal) {
+        if (modal.open) {
+          console.log("Dialog open");
+        } else {
+          console.log("Dialog closed");
+        }
+      }
+
+      
+
+
+    function modalInteraction(){
+        playBtn.addEventListener("click", ()=>{
+            
+            resetBoardAndContent();
+            // close() && showModal isnt working, just alternative to use
+            modal.close();
+            openCheck(modal); 
+        })
+    }
+
+    modalInteraction();
+
+   
     // display the playername on both sides
     player1.textContent = game.Players[0].name
     player2.textContent = game.Players[1].name
     
     // when a user click any div it will change the text content based on the Player's mark
+function playGame(){
     containerChild.forEach(div => {
-        if (!div.hasEventListener) {
+        if (!div.hasEventListener) {    
             div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
+                const availableCells = game.Game.board[0].filter(row => row.getValue() === 0).length - 1
+                console.log(availableCells);
+                console.log(isWinner)
                 
-                if(game.Game.board[0][index].getValue() === 0){
-                    if(isWinner){
-                        resetBoardAndContent()
-                        return;
-                    };    
+                if(game.Game.board[0][index].getValue() === 0 && !isWinner){
+                    div.textContent = `${player.mark}`; // Update UI with the current player's mark   
                     game.PlayRound(index);
-                    div.textContent = `${player.mark}`; // Update UI with the current player's mark    
-                     
-                    if (game.Game.checkWin(player.mark)) { 
-                        isWinner = true
-                        player.score++;
-                        // display the current score of the players
-                        player1Score.textContent = game.Players[0].score
-                        player2Score.textContent = game.Players[1].score
-                        
-                        console.log(`${player.name} wins && current score : ${player.score}`)
-                        return isWinner; // End the game after a win
-                    }
+                    if(availableCells === 0){
+                        modal.showModal();
+                        openCheck(modal);  
+                        playerResult.textContent ="Draw!, Try again next Round!"
+                        return
+                    }   
+                    checkWin(player);
+                    
                 }
-               
             });
         }
     });
+}
+
+// initial call
+playGame();
+
+    function checkWin(player){
+        if (game.Game.checkWin(player.mark)) {    
+            isWinner = true;
+            player.score++;
+            player1Score.textContent = game.Players[0].score
+            player2Score.textContent = game.Players[1].score
+            if(isWinner === true){
+                modal.showModal();
+                openCheck(modal);  
+                playerResult.textContent = `Congratulation!, ${player.name} You won the round!`
+                return;
+            }
+            console.log(`${player.name} wins && current score : ${player.score}`)
+            return isWinner; // End the game after a win
+        }
+    }
+
     function resetBoardAndContent(){
         if(game.getActivePlayer().mark !== "X"){
             game.switchTurns()
         }
+        // change all the children div of container content to empty
         containerChild.forEach(div =>{
             div.textContent = "";
-        })
+        })  
+        // reset the board
         game.Game.resetBoard();
-        
         isWinner = false;
     } 
 
@@ -166,4 +208,5 @@ function ScreenController(){
     return {game}
 }
 
+// initial call to start the game.
 ScreenController(); 
