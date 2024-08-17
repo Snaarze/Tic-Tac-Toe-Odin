@@ -43,10 +43,25 @@ body {
 }
 
 .player1-container{
-   
+    border-radius: 25px;
     grid-area: Player1;
 
 }
+
+.top-container > p{
+    font-size: 37px;
+    font-weight: 800;
+    background-color: lightblue;
+    color: white;
+}
+
+.top-container > div{
+    height: 60%;
+    background-color: blue;
+    overflow: auto;
+    font-size: 24px;
+}
+
 .player2-container{
    
     grid-area: Player2;
