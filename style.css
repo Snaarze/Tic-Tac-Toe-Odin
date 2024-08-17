@@ -47,7 +47,7 @@ body {
     grid-area: Player1;
 
 }
-
+/* 
 .top-container > p{
     font-size: 37px;
     font-weight: 800;
@@ -60,7 +60,7 @@ body {
     background-color: blue;
     overflow: auto;
     font-size: 24px;
-}
+} */
 
 .player2-container{
    
