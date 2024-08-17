@@ -62,6 +62,11 @@ body {
     font-size: 24px;
 } */
 
+.p1-previous-rounds, .p2-previous-rounds{
+    overflow: auto;
+    height: 20%;
+}
+
 .player2-container{
    
     grid-area: Player2;
