@@ -99,6 +99,7 @@ function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
 
 // display all player credentials
 function ScreenController(){
+    alert("This Project is not done yet! only done by functionality, but the design is still on going!. More updates are coming soon!")
     let isWinner = false
     let round  = 0
     const game = GameController();  
