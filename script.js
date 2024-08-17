@@ -142,6 +142,7 @@ function ScreenController(){
                 div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
+                const previousRounds = document.querySelector(".previous-rounds");
                 
                 if(game.Game.board[0][index].getValue() === 0 && !isWinner){
                     div.textContent = `${player.mark}`; // Update UI with the current player's mark   
@@ -149,6 +150,17 @@ function ScreenController(){
                     checkWin(player);
                     
                 }
+
+                if(player.mark === "X"){
+                    const move = document.createElement("p");
+                    move.textContent = `${player.name} dropped his mark to column ${index}`
+                    previousRounds.appendChild(move);
+                }else if(player.mark === "O"){
+                    const move = document.createElement("p");
+                    move.textContent = `${player.name} dropped his mark to column ${index}`
+                    
+                }
+
                 if(player.score === 5){
                     playBtn.style.display = "none"
                     return;
