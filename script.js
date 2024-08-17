@@ -112,6 +112,7 @@ function ScreenController(){
     const modal = document.querySelector("#modal-container");
     const playBtn = document.querySelector(".playBtn")
     const  playerResult = document.querySelector(".player-win")
+    const newGameBtn = document.querySelector(".newGameBtn");
     
     // 
     function modalInteraction(){
@@ -124,6 +125,7 @@ function ScreenController(){
 
          // when the button is click the board and the textContent will be empty
          resetBtn.addEventListener("click", resetBoardAndContent);
+         newGameBtn.addEventListener("click", resetGameAndScore )
     }
 
     modalInteraction();
@@ -140,12 +142,16 @@ function ScreenController(){
                 div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
-
+                
                 if(game.Game.board[0][index].getValue() === 0 && !isWinner){
                     div.textContent = `${player.mark}`; // Update UI with the current player's mark   
                     game.PlayRound(index);
                     checkWin(player);
                     
+                }
+                if(player.score === 5){
+                    playBtn.style.display = "none"
+                    return;
                 }
                 });
             }
@@ -189,9 +195,18 @@ function ScreenController(){
         isWinner = false;
     } 
 
+    function resetGameAndScore(){
+        player1Score.textContent = game.Players[0].score = 0
+        player2Score.textContent = game.Players[1].score = 0
+        resetBoardAndContent();
+        modal.close();
+    }
+
    
     return {game}
 }
+
+
 
 // initial call to start the game.
 ScreenController(); 
