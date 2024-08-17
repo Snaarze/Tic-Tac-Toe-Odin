@@ -100,7 +100,7 @@ function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
 // display all player credentials
 function ScreenController(){
     let isWinner = false
-    
+    let round  = 0
     const game = GameController();  
     // selector for all div
     const containerChild = document.querySelectorAll(".container > .markDiv");
@@ -113,6 +113,8 @@ function ScreenController(){
     const playBtn = document.querySelector(".playBtn")
     const  playerResult = document.querySelector(".player-win")
     const newGameBtn = document.querySelector(".newGameBtn");
+    const p1previousRounds = document.querySelector(".p1-previous-rounds");
+    const p2previousRounds = document.querySelector(".p2-previous-rounds");
     
     // 
     function modalInteraction(){
@@ -142,25 +144,14 @@ function ScreenController(){
                 div.addEventListener("click", () => {
                 const index = Number(div.getAttribute("data-index"));
                 const player = game.getActivePlayer(); // Get the current player before playing the round
-                const previousRounds = document.querySelector(".previous-rounds");
                 
+                DisplayPreviousMove(player,index)
                 if(game.Game.board[0][index].getValue() === 0 && !isWinner){
                     div.textContent = `${player.mark}`; // Update UI with the current player's mark   
                     game.PlayRound(index);
                     checkWin(player);
                     
                 }
-
-                if(player.mark === "X"){
-                    const move = document.createElement("p");
-                    move.textContent = `${player.name} dropped his mark to column ${index}`
-                    previousRounds.appendChild(move);
-                }else if(player.mark === "O"){
-                    const move = document.createElement("p");
-                    move.textContent = `${player.name} dropped his mark to column ${index}`
-                    
-                }
-
                 if(player.score === 5){
                     playBtn.style.display = "none"
                     return;
@@ -183,7 +174,11 @@ function ScreenController(){
             if(isWinner === true){
                 modal.showModal();
                 playerResult.textContent = `Congratulation!, ${player.name} You won the round!`
-                return;
+                if(player.mark === "X"){
+                    displayWon(player)
+                }else if(player.mark === "O"){
+                    displayWon(player)
+                }
             }
             console.log(`${player.name} wins && current score : ${player.score}`)
             return isWinner; // End the game after a win
@@ -193,7 +188,7 @@ function ScreenController(){
             return
         }
     }
-
+    // reset the board && content!
     function resetBoardAndContent(){
         if(game.getActivePlayer().mark !== "X"){
             game.switchTurns()
@@ -206,12 +201,34 @@ function ScreenController(){
         game.Game.resetBoard();
         isWinner = false;
     } 
-
+    // reset the playerscore && wholeboard!
     function resetGameAndScore(){
         player1Score.textContent = game.Players[0].score = 0
         player2Score.textContent = game.Players[1].score = 0
         resetBoardAndContent();
         modal.close();
+    }
+
+    function DisplayPreviousMove(player,index){
+        const move = document.createElement("p");
+        move.textContent = `${player.name} dropped his mark to column ${index}`
+        if(player.mark === "X"){
+            p1previousRounds.appendChild(move);
+        }else if(player.mark === "O"){
+            p2previousRounds.appendChild(move);
+        }
+    }
+
+    function displayWon(player){
+        round++
+        const move = document.createElement("p");
+        move.textContent = `Congrats ${player.name}!, You won the Round ${round}!`
+        if(player.mark === "X"){
+            p1previousRounds.appendChild(move);
+        }else if(player.mark === "O"){
+            p2previousRounds.appendChild(move)
+        }
+        return round;
     }
 
    
