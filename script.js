@@ -99,7 +99,7 @@ function GameController(PlayerOne = "Snaarze", PlayerTwo = "Computer") {
 
 // display all player credentials
 function ScreenController(){
-    alert("This Project is not done yet! only done by functionality, but the design is still on going!. More updates are coming soon!")
+    // alert("This Project is not done yet! only done by functionality, but the design is still on going!. More updates are coming soon!")
     let isWinner = false
     let round  = 0
     const game = GameController();  
@@ -116,6 +116,8 @@ function ScreenController(){
     const newGameBtn = document.querySelector(".newGameBtn");
     const p1previousRounds = document.querySelector(".p1-previous-rounds");
     const p2previousRounds = document.querySelector(".p2-previous-rounds");
+    const p1Mark = document.querySelector(".p1-mark");
+    const p2Mark = document.querySelector(".p2-mark");
     
     // 
     function modalInteraction(){
@@ -127,7 +129,6 @@ function ScreenController(){
         })
 
          // when the button is click the board and the textContent will be empty
-         resetBtn.addEventListener("click", resetBoardAndContent);
          newGameBtn.addEventListener("click", resetGameAndScore )
     }
 
@@ -137,6 +138,8 @@ function ScreenController(){
     // display the playername on both sides
     player1.textContent = game.Players[0].name
     player2.textContent = game.Players[1].name
+    p1Mark.textContent = game.Players[0].mark
+    p2Mark.textContent = game.Players[1].mark
     
     // when a user click any div it will change the text content based on the Player's mark
     function playGame(){
@@ -156,6 +159,8 @@ function ScreenController(){
                 if(player.score === 5){
                     playBtn.style.display = "none"
                     return;
+                }else {
+                    playBtn.style.display = "inline-block"
                 }
                 });
             }
@@ -207,15 +212,16 @@ function ScreenController(){
         player1Score.textContent = game.Players[0].score = 0
         player2Score.textContent = game.Players[1].score = 0
         resetBoardAndContent();
+        resetRound();
         modal.close();
     }
 
     function DisplayPreviousMove(player,index){
         const move = document.createElement("p");
         move.textContent = `${player.name} dropped his mark to column ${index}`
-        if(player.mark === "X"){
+        if(player.mark === "X" && game.Game.board[0][index].getValue() === 0){
             p1previousRounds.appendChild(move);
-        }else if(player.mark === "O"){
+        }else if(player.mark === "O" && game.Game.board[0][index].getValue() === 0){
             p2previousRounds.appendChild(move);
         }
     }
@@ -231,6 +237,20 @@ function ScreenController(){
         }
         return round;
     }
+
+    function resetRound(){
+        do{
+            p1previousRounds.firstChild.remove()
+           
+        }while(p1previousRounds.firstChild)
+
+        do{
+            p2previousRounds.firstChild.remove()
+        }while(p2previousRounds.firstChild)
+           
+        round = 0;
+        return round;
+    } 
 
    
     return {game}
