@@ -8,6 +8,7 @@
 body {
     width: 100vw;
     height: 100vh;
+    overflow :hidden;
 }
 
 .game-container{
@@ -45,7 +46,8 @@ body {
 .player1-container{
     border-radius: 25px;
     grid-area: Player1;
-
+    grid-template-areas:  "PlayerInfo"
+                          "PlayerScore";
 }
 /* 
 .top-container > p{
@@ -62,21 +64,28 @@ body {
     font-size: 24px;
 } */
 
-.p1-previous-rounds, .p2-previous-rounds{
-    overflow: auto;
-    height: 20%;
+.p1-top-container{
+    height: 100%;
+}
+.p1-score-container{
+    height: 100%;
 }
 
+ .p1-previous-rounds, .p2-previous-rounds{
+    overflow: auto;
+    height: 80%;
+}
+
+
 .player2-container{
-   
     grid-area: Player2;
 }
 
 .player1-container, .player2-container{
     display: grid;
-    grid-template-rows: 1fr 1fr;
-    height: 100%;
+    grid-template-rows: 490px 490px;
     width: 100%;
+    height: 100%;
 }
 
 
@@ -84,6 +93,26 @@ body {
     grid-area: buttons;
     width: 100%;
     height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "turn turn"
+                         "p1 p2" ;
+    text-align: center;
+}
+
+.button-game > p {
+    font-size: 200px;
+}
+.p1-mark {
+    grid-area: p1;
+}
+
+.p2-mark {
+    grid-area: p2;
+}
+
+.player-turn {
+    grid-area: turn;
 }
 .resetBoard {
     padding: 20px 60px;
